@@ -13,6 +13,7 @@ A modern React frontend for the Flashcards API built with Vite and Axios.
 - 💾 Persistent data with backend API
 - 🎨 Beautiful, responsive UI
 - 🔄 Flip cards to see translations
+- 🔒 User authentication with registration/login (JWT protected)
 
 ## Setup
 
@@ -87,6 +88,14 @@ The frontend connects to the backend API at `http://localhost:8080/api/flashcard
 - `GET /api/flashcards/stats/total` - Get total count
 
 ## Features Detail
+
+### Authentication
+
+- Register a new account or log in with existing credentials
+- JWT token stored in `localStorage` and sent with API requests
+- Flashcard management pages are protected until authenticated
+
+
 
 ### Flashcard Form
 - Add new flashcards with foreign word, English translation, language, and difficulty

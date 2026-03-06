@@ -1,16 +1,32 @@
 import { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { flashcardAPI } from './api'
 import FlashcardList from './components/FlashcardList'
 import FlashcardForm from './components/FlashcardForm'
 import SearchBar from './components/SearchBar'
+import Login from './components/Login'
+import Register from './components/Register'
+import { AuthProvider, useAuth } from './auth'
 import './App.css'
 
-function App() {
+// component that wraps protected content
+function ProtectedRoute({ children }) {
+  const auth = useAuth()
+  if (!auth.isAuthenticated) {
+    return <Navigate to="/login" replace />
+  }
+  return children
+}
+
+// main dashboard containing flashcards features
+function Dashboard() {
   const [flashcards, setFlashcards] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [editingId, setEditingId] = useState(null)
   const [totalCount, setTotalCount] = useState(0)
+  const auth = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
     loadFlashcards()
@@ -130,11 +146,19 @@ function App() {
 
   const editingCard = editingId ? flashcards.find(card => card.id === editingId) : null
 
+  const handleLogout = () => {
+    auth.logout()
+    navigate('/login')
+  }
+
   return (
     <div className="app">
       <header className="app-header">
         <h1>📚 Flashcards API</h1>
         <p>Learn foreign language words with interactive flashcards</p>
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
       </header>
 
       <div className="app-container">
@@ -170,6 +194,28 @@ function App() {
         </div>
       </div>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   )
 }
 

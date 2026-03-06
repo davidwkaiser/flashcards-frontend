@@ -1,0 +1,31 @@
+/* simple form styles */
+.auth-container {
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+.auth-form label {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  box-sizing: border-box;
+}
+
+.auth-form button {
+  padding: 10px 20px;
+  margin-top: 10px;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 12px;
+}
