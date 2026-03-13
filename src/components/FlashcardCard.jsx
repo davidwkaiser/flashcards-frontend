@@ -1,8 +1,16 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './FlashcardCard.css'
 
-const FlashcardCard = ({ card, onEdit, onDelete }) => {
+const FlashcardCard = ({ card, onEdit, onDelete, forceFlipped = false }) => {
   const [isFlipped, setIsFlipped] = useState(false)
+
+  // Reset individual flip state when the global toggle changes
+  useEffect(() => {
+    setIsFlipped(false)
+  }, [forceFlipped])
+
+  // The actual flipped state is XOR of global default and individual override
+  const currentFlipped = forceFlipped !== isFlipped
 
   const getDifficultyLabel = (difficulty) => {
     // Handle both integer and string formats
@@ -33,7 +41,7 @@ const FlashcardCard = ({ card, onEdit, onDelete }) => {
   return (
     <div className="flashcard-card">
       <div
-        className={`card-inner ${isFlipped ? 'flipped' : ''}`}
+        className={`card-inner ${currentFlipped ? 'flipped' : ''}`}
         onClick={() => setIsFlipped(!isFlipped)}
       >
         <div className="card-front">

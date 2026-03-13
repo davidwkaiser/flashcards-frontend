@@ -1,7 +1,10 @@
+import { useState } from 'react'
 import FlashcardCard from './FlashcardCard'
 import './FlashcardList.css'
 
 const FlashcardList = ({ flashcards, onEdit, onDelete }) => {
+  const [showEnglish, setShowEnglish] = useState(false)
+
   if (!flashcards || flashcards.length === 0) {
     return (
       <div className="empty-state">
@@ -13,7 +16,15 @@ const FlashcardList = ({ flashcards, onEdit, onDelete }) => {
 
   return (
     <div className="flashcard-list">
-      <p className="list-title">Total: {flashcards.length} flashcards</p>
+      <div className="list-header">
+        <p className="list-title">Total: {flashcards.length} flashcards</p>
+        <button
+          className="toggle-button"
+          onClick={() => setShowEnglish(!showEnglish)}
+        >
+          {showEnglish ? 'Show Foreign Language' : 'Show English'}
+        </button>
+      </div>
       <div className="cards-grid">
         {flashcards.map(card => (
           <FlashcardCard
@@ -21,6 +32,7 @@ const FlashcardList = ({ flashcards, onEdit, onDelete }) => {
             card={card}
             onEdit={onEdit}
             onDelete={onDelete}
+            forceFlipped={showEnglish}
           />
         ))}
       </div>
