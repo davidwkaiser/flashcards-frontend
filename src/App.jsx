@@ -20,11 +20,15 @@ function ProtectedRoute({ children }) {
 
 // main dashboard containing flashcards features
 function Dashboard() {
+  const [allFlashcards, setAllFlashcards] = useState([])
   const [flashcards, setFlashcards] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [editingId, setEditingId] = useState(null)
   const [totalCount, setTotalCount] = useState(0)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [difficultyFilter, setDifficultyFilter] = useState('all')
+  const [languageFilter, setLanguageFilter] = useState('all')
   const auth = useAuth()
   const navigate = useNavigate()
 
@@ -33,12 +37,48 @@ function Dashboard() {
     loadTotalCount()
   }, [])
 
+  const applyFilters = ({ cards, search, difficulty, language }) => {
+    let filtered = [...cards]
+
+    const searchTermLower = search?.trim().toLowerCase()
+    if (searchTermLower) {
+      filtered = filtered.filter(card => {
+        const question = card.question?.toLowerCase() || ''
+        const answer = card.answer?.toLowerCase() || ''
+        return question.includes(searchTermLower) || answer.includes(searchTermLower)
+      })
+    }
+
+    if (difficulty && difficulty !== 'all') {
+      const difficultyMap = {
+        'BEGINNER': 1,
+        'INTERMEDIATE': 2,
+        'ADVANCED': 3,
+      }
+      const difficultyValue = difficultyMap[difficulty]
+      filtered = filtered.filter(card => Number(card.difficulty) === difficultyValue)
+    }
+
+    if (language && language !== 'all') {
+      filtered = filtered.filter(card => card.language?.toLowerCase() === language.toLowerCase())
+    }
+
+    return filtered
+  }
+
   const loadFlashcards = async () => {
     setLoading(true)
     setError(null)
     try {
       const response = await flashcardAPI.getAll()
-      setFlashcards(response.data)
+      const cards = response.data || []
+      setAllFlashcards(cards)
+      setFlashcards(applyFilters({
+        cards,
+        search: searchTerm,
+        difficulty: difficultyFilter,
+        language: languageFilter,
+      }))
     } catch (err) {
       setError('Failed to load flashcards. Make sure the API is running on http://localhost:8080')
       console.error(err)
@@ -58,6 +98,10 @@ function Dashboard() {
     } catch (err) {
       console.error('Failed to load total count:', err)
     }
+  }
+
+  const updateFilteredFlashcards = ({ cards = allFlashcards, search = searchTerm, difficulty = difficultyFilter, language = languageFilter } = {}) => {
+    setFlashcards(applyFilters({ cards, search, difficulty, language }))
   }
 
   const handleAdd = async (formData) => {
@@ -98,16 +142,12 @@ function Dashboard() {
     }
   }
 
-  const handleSearch = async (keyword) => {
+  const handleSearch = (keyword) => {
+    setSearchTerm(keyword)
     setLoading(true)
     setError(null)
     try {
-      if (keyword.trim()) {
-        const response = await flashcardAPI.search(keyword)
-        setFlashcards(response.data)
-      } else {
-        loadFlashcards()
-      }
+      updateFilteredFlashcards({ search: keyword })
     } catch (err) {
       setError('Failed to search flashcards')
       console.error(err)
@@ -116,22 +156,12 @@ function Dashboard() {
     }
   }
 
-  const handleFilterByDifficulty = async (difficulty) => {
+  const handleFilterByDifficulty = (difficulty) => {
+    setDifficultyFilter(difficulty)
     setLoading(true)
     setError(null)
     try {
-      if (difficulty === 'all') {
-        loadFlashcards()
-      } else {
-        // Convert difficulty label to integer for API
-        const difficultyMap = {
-          'BEGINNER': 1,
-          'INTERMEDIATE': 2,
-          'ADVANCED': 3,
-        }
-        const response = await flashcardAPI.getByDifficulty(difficultyMap[difficulty])
-        setFlashcards(response.data)
-      }
+      updateFilteredFlashcards({ difficulty })
     } catch (err) {
       setError('Failed to filter flashcards')
       console.error(err)
@@ -140,16 +170,12 @@ function Dashboard() {
     }
   }
 
-  const handleFilterByLanguage = async (language) => {
+  const handleFilterByLanguage = (language) => {
+    setLanguageFilter(language)
     setLoading(true)
     setError(null)
     try {
-      if (language === 'all') {
-        loadFlashcards()
-      } else {
-        const response = await flashcardAPI.getByLanguage(language)
-        setFlashcards(response.data)
-      }
+      updateFilteredFlashcards({ language })
     } catch (err) {
       setError('Failed to filter flashcards')
       console.error(err)
