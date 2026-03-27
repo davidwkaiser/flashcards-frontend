@@ -48,16 +48,16 @@ export const flashcardAPI = {
   delete: (id) => api.delete(`/${id}`),
 
   // Delete all flashcards
-  deleteAll: () => api.delete('/'),
+  // deleteAll: () => api.delete('/'),
 
   // Get flashcards by language
-  getByLanguage: (language) => api.get(`/language/${language}`),
+  // getByLanguage: (language) => api.get(`/language/${language}`),
 
   // Get flashcards by difficulty
-  getByDifficulty: (difficulty) => api.get(`/difficulty/${difficulty}`),
+  // getByDifficulty: (difficulty) => api.get(`/difficulty/${difficulty}`),
 
   // Search flashcards
-  search: (keyword) => api.get(`/search?keyword=${keyword}`),
+  // search: (keyword) => api.get(`/search?keyword=${keyword}`),
 
   // Get total count
   getTotal: () => api.get('/stats/total'),
