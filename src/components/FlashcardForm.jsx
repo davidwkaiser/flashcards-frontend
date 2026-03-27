@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './FlashcardForm.css'
+import { LANGUAGES } from './constants'
 
 // Mapping between difficulty integers and display labels
 const DIFFICULTY_MAP = {
@@ -116,14 +117,9 @@ const FlashcardForm = ({ onSubmit, initialData, isEditing, onCancel }) => {
           value={formData.language}
           onChange={handleChange}
         >
-          <option value="Spanish">Spanish</option>
-          <option value="French">French</option>
-          <option value="German">German</option>
-          <option value="Italian">Italian</option>
-          <option value="Portuguese">Portuguese</option>
-          <option value="Japanese">Japanese</option>
-          <option value="Chinese">Chinese</option>
-          <option value="Korean">Korean</option>
+          {LANGUAGES.map(lang => (
+            <option key={lang} value={lang}>{lang}</option>
+          ))}
         </select>
       </div>
 

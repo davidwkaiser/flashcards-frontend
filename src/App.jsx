@@ -140,6 +140,24 @@ function Dashboard() {
     }
   }
 
+  const handleFilterByLanguage = async (language) => {
+    setLoading(true)
+    setError(null)
+    try {
+      if (language === 'all') {
+        loadFlashcards()
+      } else {
+        const response = await flashcardAPI.getByLanguage(language)
+        setFlashcards(response.data)
+      }
+    } catch (err) {
+      setError('Failed to filter flashcards')
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleCancel = () => {
     setEditingId(null)
   }
@@ -179,7 +197,7 @@ function Dashboard() {
               <p>Total Flashcards: <strong>{totalCount}</strong></p>
             </div>
 
-            <SearchBar onSearch={handleSearch} onFilterByDifficulty={handleFilterByDifficulty} />
+            <SearchBar onSearch={handleSearch} onFilterByDifficulty={handleFilterByDifficulty} onFilterByLanguage={handleFilterByLanguage} />
 
             {loading ? (
               <div className="loading">Loading flashcards...</div>
