@@ -43,9 +43,9 @@ function Dashboard() {
     const searchTermLower = search?.trim().toLowerCase()
     if (searchTermLower) {
       filtered = filtered.filter(card => {
-        const question = card.question?.toLowerCase() || ''
-        const answer = card.answer?.toLowerCase() || ''
-        return question.includes(searchTermLower) || answer.includes(searchTermLower)
+        const foreignWord = (card.foreignWord || card.question || '').toLowerCase()
+        const englishTranslation = (card.englishTranslation || card.answer || '').toLowerCase()
+        return foreignWord.includes(searchTermLower) || englishTranslation.includes(searchTermLower)
       })
     }
 
